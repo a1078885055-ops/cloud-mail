@@ -1,4 +1,5 @@
 import app from './hono/webs';
+import { handlePromoMcp } from './promo-mcp';
 import { email } from './email/email';
 import userService from './service/user-service';
 import verifyRecordService from './service/verify-record-service';
@@ -10,6 +11,7 @@ export default {
 	 async fetch(req, env, ctx) {
 
 		const url = new URL(req.url)
+		if (url.pathname === '/mcp') return handlePromoMcp(req, env);
 
 		if (url.pathname.startsWith('/api/')) {
 			url.pathname = url.pathname.replace('/api', '')
