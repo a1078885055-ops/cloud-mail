@@ -94,6 +94,7 @@ const en = {
     sentVia: 'via {email}',
     sentViaTag: 'Via',
     subject: 'Subject',
+    bodySearch: 'Body',
     sender: 'Sender',
     user: 'User',
     searchByContent: 'Enter text to search',

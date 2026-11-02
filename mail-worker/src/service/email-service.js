@@ -256,8 +256,15 @@ const emailService = {
 		return conditions;
 	},
 
-	allEmailListFilters({ emailId, name, subject, accountEmail, userEmail, type, timeSort, withCursor = true }) {
+	allEmailListFilters({ emailId, name, subject, body, accountEmail, userEmail, type, timeSort, withCursor = true }) {
 		const conditions = [];
+		if (body?.trim()) {
+			const needle = body.trim();
+			conditions.push(or(
+				sql`instr(lower(coalesce(${email.text}, '')), lower(${needle})) > 0`,
+				sql`instr(lower(coalesce(${email.content}, '')), lower(${needle})) > 0`
+			));
+		}
 
 		if (type === 'send') {
 			conditions.push(eq(email.type, emailConst.type.SEND));
@@ -1135,7 +1142,7 @@ const emailService = {
 
 	async allList(c, params) {
 
-		let { emailId, size, name, subject, accountEmail, userEmail, type, timeSort, full } = params;
+		let { emailId, size, name, subject, body, accountEmail, userEmail, type, timeSort, full } = params;
 
 		size = Number(size);
 		emailId = Number(emailId) || 0;
@@ -1160,8 +1167,8 @@ const emailService = {
 
 		full = full === 1;
 
-		const filters = this.allEmailListFilters({ emailId, name, subject, accountEmail, userEmail, type, timeSort });
-		const countFilters = this.allEmailListFilters({ emailId, name, subject, accountEmail, userEmail, type, timeSort, withCursor: false });
+		const filters = this.allEmailListFilters({ emailId, name, subject, body, accountEmail, userEmail, type, timeSort });
+		const countFilters = this.allEmailListFilters({ emailId, name, subject, body, accountEmail, userEmail, type, timeSort, withCursor: false });
 		const columns = full ? emailListColumns : emailBriefColumns;
 
 		const query = orm(c).select({ ...columns, userEmail: user.email })

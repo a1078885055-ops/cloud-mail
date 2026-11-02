@@ -20,6 +20,7 @@
 
     >
       <template #first>
+        <promoScanner />
         <el-input
             v-model="searchValue"
             :placeholder="$t('searchByContent')"
@@ -35,6 +36,7 @@
               >
                 <el-option key="3" :label="$t('sender')" :value="'name'"/>
                 <el-option key="4" :label="$t('subject')" :value="'subject'"/>
+                <el-option key="5" :label="$t('bodySearch')" :value="'body'"/>
                 <el-option key="1" :label="$t('user')" :value="'user'"/>
                 <el-option key="2" :label="$t('selectEmail')" :value="'account'"/>
               </el-select>
@@ -89,6 +91,7 @@
 </template>
 
 <script setup>
+import promoScanner from '@/components/promo-scanner/index.vue';
 import {starAdd, starCancel} from "@/request/star.js";
 import emailScroll from "@/components/email-scroll/index.vue"
 import {computed, defineOptions, reactive, ref, watch, onMounted} from "vue";
@@ -166,13 +169,14 @@ function closedClear() {
   clearTime.value = null
 }
 
-const appliedSearchText = computed(() => params.name || params.subject || params.userEmail || params.accountEmail || '')
+const appliedSearchText = computed(() => params.body || params.name || params.subject || params.userEmail || params.accountEmail || '')
 
 const selectTitle = computed(() => {
   if (params.searchType === 'user') return t('user')
   if (params.searchType === 'account') return t('selectEmail')
   if (params.searchType === 'name') return t('sender')
   if (params.searchType === 'subject') return t('subject')
+  if (params.searchType === 'body') return t('bodySearch')
 })
 
 const paramsStar = localStorage.getItem('all-email-params')
@@ -246,11 +250,13 @@ function refreshBefore() {
   params.accountEmail = null
   params.name = null
   params.subject = null
+  params.body = null
   params.searchType = 'name'
 }
 
 function search() {
 
+  params.body = null
   params.userEmail = null
   params.accountEmail = null
   params.name = null
@@ -270,6 +276,9 @@ function search() {
 
   if (params.searchType === 'subject') {
     params.subject = searchValue.value
+  }
+  if (params.searchType === 'body') {
+    params.body = (searchValue.value || '').trim()
   }
 
   sysEmailScroll.value.refreshList();

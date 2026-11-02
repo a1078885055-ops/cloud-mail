@@ -94,6 +94,7 @@ const zh = {
     sentVia: '由 {email} 代发',
     sentViaTag: '代发',
     subject: '主题',
+    bodySearch: '正文',
     sender: '发件人',
     user: '用户',
     searchByContent: '输入内容查询',
